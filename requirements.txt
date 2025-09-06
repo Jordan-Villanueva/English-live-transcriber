@@ -4,3 +4,4 @@ whisper
 torch
 sounddevice
 numpy
+scipy
