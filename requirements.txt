@@ -1,7 +1,7 @@
 streamlit
-openai
 whisper
 torch
 sounddevice
 numpy
 scipy
+deep-translator
