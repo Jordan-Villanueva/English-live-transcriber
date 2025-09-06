@@ -1,6 +1,6 @@
 import streamlit as st
 import whisper
-from openai import OpenAI
+from deep_translator import GoogleTranslator
 import sounddevice as sd
 import numpy as np
 import queue
@@ -13,7 +13,7 @@ import time
 # Configuración inicial
 # --------------------
 st.set_page_config(page_title="🎤 English ↔ Spanish Live", layout="wide")
-st.title("🎤 Live Transcription & Translation")
+st.title("🎤 Live Transcription & Translation (GRATIS)")
 st.write("Habla al micrófono y mira la transcripción y traducción en tiempo real.")
 
 col1, col2 = st.columns(2)
@@ -22,9 +22,6 @@ col2.subheader("🌎 Traducción")
 
 # Cargar modelo Whisper
 model = whisper.load_model("small")
-
-# Cliente OpenAI
-client = OpenAI()
 
 # --------------------
 # Cola de audio para procesar
@@ -66,19 +63,16 @@ def process_audio():
             col1.empty()
             col1.write(accumulated_text)
 
-            # Traducir con OpenAI
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a translator. Translate English ↔ Spanish keeping meaning clear and natural."},
-                    {"role": "user", "content": accumulated_text}
-                ]
-            )
-            translated_text = response.choices[0].message.content
+            # Traducir con Google Translator
+            try:
+                translated_text = GoogleTranslator(source='auto', target='es').translate(accumulated_text)
+            except Exception as e:
+                translated_text = f"Error en traducción: {e}"
+
             col2.empty()
             col2.write(translated_text)
 
-        time.sleep(0.1)  # Pequeño delay para no saturar
+        time.sleep(0.1)  # pequeño delay para no saturar
 
 # --------------------
 # Botón para iniciar/detener
